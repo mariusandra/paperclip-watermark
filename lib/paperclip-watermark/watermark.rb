@@ -21,7 +21,7 @@ module Paperclip
       end
       @target_geometry  = Geometry.parse geometry
       @current_geometry = Geometry.from_file @file
-      @convert_options  = options[:convert_options]
+      @convert_options  = options[:convert_options].split(" ")
       @whiny            = options[:whiny].nil? ? true : options[:whiny]
       @format           = options[:format]
       @watermark_path   = options[:watermark_path]
