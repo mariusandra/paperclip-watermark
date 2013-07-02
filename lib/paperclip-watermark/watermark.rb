@@ -21,7 +21,7 @@ module Paperclip
       end
       @target_geometry  = Geometry.parse geometry
       @current_geometry = Geometry.from_file @file
-      @convert_options  = options[:convert_options].split(" ")
+      @convert_options  = options[:convert_options]
       @whiny            = options[:whiny].nil? ? true : options[:whiny]
       @format           = options[:format]
       @watermark_path   = options[:watermark_path]
@@ -54,17 +54,17 @@ module Paperclip
       params += transformation_command
       params << tofile(dst)
       begin
-        success = Paperclip.run(command, params.flatten.compact.collect{|e| "'#{e}'"}.join(" "))
+        success = Paperclip.run(command, params.flatten.compact.join(" "))
       rescue Paperclip::Errors::CommandNotFoundError
         raise Paperclip::Errors::CommandNotFoundError, "There was an error resizing and cropping #{@basename}" if @whiny
       end
 
       if watermark_path
         command = "composite"
-        params = %W[-gravity #{@position} #{watermark_path} #{tofile(dst)}]
+        params = %W[-gravity '#{@position}' '#{watermark_path}' '#{tofile(dst)}']
         params << tofile(dst)
         begin
-          success = Paperclip.run(command, params.flatten.compact.collect{|e| "'#{e}'"}.join(" "))
+          success = Paperclip.run(command, params.flatten.compact.join(" "))
         rescue Paperclip::Errors::CommandNotFoundError
           raise Paperclip::Errors::CommandNotFoundError, "There was an error processing the watermark for #{@basename}" if @whiny
         end
@@ -84,14 +84,14 @@ module Paperclip
     def transformation_command
       if @target_geometry.present?
         scale, crop = @current_geometry.transformation_to(@target_geometry, crop?)
-        trans = %W[-resize #{scale}]
-        trans += %W[-crop #{crop} +repage] if crop
+        trans = %W[-resize '#{scale}']
+        trans += %W[-crop '#{crop}' +repage] if crop
         trans << convert_options if convert_options?
         trans
       else
         scale, crop = @current_geometry.transformation_to(@current_geometry, crop?)
-        trans = %W[-resize #{scale}]
-        trans += %W[-crop #{crop} +repage] if crop
+        trans = %W[-resize '#{scale}']
+        trans += %W[-crop '#{crop}' +repage] if crop
         trans << convert_options if convert_options?
         trans
       end
