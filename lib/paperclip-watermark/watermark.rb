@@ -50,9 +50,10 @@ module Paperclip
       dst.binmode
 
       command = "convert"
-      params = [fromfile]
+      params = ["'#{fromfile}'"]
       params += transformation_command
-      params << tofile(dst)
+      params += ["'#{tofile(dst)}'"]
+      p params
       begin
         success = Paperclip.run(command, params.flatten.compact.join(" "))
       rescue Paperclip::Errors::CommandNotFoundError
