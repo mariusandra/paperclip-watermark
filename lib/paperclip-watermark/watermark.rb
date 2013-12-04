@@ -63,7 +63,7 @@ module Paperclip
       if watermark_path
         command = "composite"
         params = %W[-gravity '#{@position}' '#{watermark_path}' '#{tofile(dst)}']
-        params << tofile(dst)
+        params << "'#{tofile(dst)}'"
         begin
           success = Paperclip.run(command, params.flatten.compact.join(" "))
         rescue Paperclip::Errors::CommandNotFoundError
